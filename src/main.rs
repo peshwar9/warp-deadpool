@@ -1,6 +1,9 @@
-use warp::Filter;
+use warp::{Filter, Rejection};
 mod app;
 mod routes;
+mod error;
+
+type Result<T> = std::result::Result<T, Rejection>;
 
 #[tokio::main]
 async fn main() {
