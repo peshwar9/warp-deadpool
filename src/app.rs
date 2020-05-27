@@ -4,11 +4,12 @@ use std::env;
 
 const APP_NAME: &str = env!("CARGO_PKG_NAME");
 
-#[derive(Clone)]
+#[derive(Clone,Debug)]
 pub struct AppState {
     jwt_string: String,
     db_url: String,
 }
+
 pub async fn init_and_run() {
     
     let db_url = env::var("DATABASE_URL").expect("Database URL must be set");
