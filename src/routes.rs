@@ -7,7 +7,10 @@ pub fn routes(state: AppState) -> impl Filter<Extract = impl warp::Reply, Error 
         .and(with_state(state.clone()))
         .map(|state: AppState| format!("Hello db is {:?}",state));
 
-    let health_route = warp::path("health").map(|| "Health Ok");
+    let health_route = warp::path("health")
+        .and(with_state(state.clone()))
+        .map(|state: AppState| format!("Health is ok; db is {:?}",state));
+
     let routes = index_route
         .or(health_route);
     routes
