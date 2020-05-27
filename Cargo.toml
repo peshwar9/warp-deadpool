@@ -1,0 +1,14 @@
+[package]
+name = "warp-deadpool"
+version = "0.1.0"
+authors = ["peshwar9 <par.esh1937@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+warp = "0.2"
+tokio = {version = "0.2", features = ["macros"]}
+dotenv = "0.15.0"
+deadpool-postgres = "0.5.5"
+tokio-postgres = "0.5.4"
