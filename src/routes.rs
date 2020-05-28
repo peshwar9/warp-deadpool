@@ -100,7 +100,7 @@ mod tests {
         todos_delete_route,
     };
     use crate::app::AppState;
-    use crate::models::{Todo, TodoCreate, TodoUpdate};
+    use crate::models::{TodoCreate, TodoUpdate};
 
     // cargo test hello_test -- --nocapture
     #[tokio::test]
@@ -137,6 +137,7 @@ mod tests {
             .path("/todo")
             .json(&TodoCreate {
                 name: "chris".into(),
+                priority: None
             })
             .reply(&api).await;
         assert_eq!(response.status(), StatusCode::OK);
@@ -153,14 +154,15 @@ mod tests {
         let response = request()
             .method("POST")
             .path("/todos")
-            .json(&Todo {
-                id: 1,
+            .json(&TodoCreate {
+           
                 name: "chris".into(),
-                completed: false,
+                priority: None
             })
             .reply(&api).await;
         assert_eq!(response.status(), StatusCode::NOT_FOUND);
     }
+
     // cargo test todos_update_test -- --nocapture
     #[tokio::test]
     async fn todos_update_test() {
@@ -171,8 +173,8 @@ mod tests {
         let response = request().method("PUT")
         .path("/todo/1")
         .json(&TodoUpdate {
-            name: "pam".into(),
-            completed: false,
+            name: Some("pam".into()),
+            completed: Some(false),
         })
         .reply(&api).await;
         assert_eq!(response.status(), StatusCode::OK);
