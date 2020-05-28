@@ -29,12 +29,12 @@ pub async fn todos_list_handler(_state: AppState) -> Result<impl Reply, Infallib
 
 // Todo: Create handler
 pub async fn todos_create_handler(todo: TodoCreate, _state: AppState) -> Result<impl Reply, Rejection> {
-        let x = 1;
-        if x == 0 {
+        let name = &todo.name;
+       if let Ok(_) = name.parse::<String>() {
             let response = format!("Hello from create_todo {:#?}", todo);
             Ok(warp::reply::json(&response))
         } else {
-            Err(reject::custom(AppError)
+            Err(reject::custom(AppError))
         }
 
     }

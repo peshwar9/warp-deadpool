@@ -1,6 +1,6 @@
 [package]
 name = "warp-deadpool"
-version = "0.4"
+version = "0.4.0"
 authors = ["peshwar9"]
 edition = "2018"
 
