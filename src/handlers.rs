@@ -7,7 +7,14 @@ use warp::{http::StatusCode, reject, Reply, Rejection};
 // External crates - Utilities: None
 // Other internal modules
 use crate::app::AppState;
-use crate::models::{TodoCreate, TodoUpdate, Todo, fetch_to_dos, create_todo};
+use crate::models::{TodoCreate, 
+    TodoUpdate, 
+    Todo, 
+    fetch_to_dos, 
+    create_todo,
+    update_todo,
+    delete_todo,    
+};
 use crate::errors::AppError;
 // Const and type declarations:None
 // Struct declarations:None
@@ -33,24 +40,24 @@ pub async fn todos_create_handler(todo: TodoCreate, state: AppState) -> Result<i
     let r = create_todo(&state.db_pool,todo)
     .await
     .unwrap();
-    //let pool = pool.clone();
-
-
-//            Err(reject::custom(AppError))
   
 Ok(warp::reply::json(&r))
     }
    
 // Todo: Update handler
-pub async fn todos_update_handler(id: u64, todo: TodoUpdate, _state: AppState) -> Result<impl Reply, Infallible> {
-    let response = format!("Hello from update_todo for {} is {:#?}", id, todo);
-    Ok(warp::reply::json(&response))
+pub async fn todos_update_handler(id: i32, todo: TodoUpdate, state: AppState) -> Result<impl Reply, Infallible> {
+    let r = update_todo(&state.db_pool,id, todo)
+    .await
+    .unwrap();
+    Ok(warp::reply::json(&r))
 }
 
 // Todo: Delete handler
-pub async fn todos_delete_handler(id: u64, _state: AppState) -> Result<impl Reply, Infallible> {
-    let response = format!("Deleted id {} ", id);
-    Ok(warp::reply::json(&response))
+pub async fn todos_delete_handler(id: i32, state: AppState) -> Result<impl Reply, Infallible> {
+    let r = delete_todo(&state.db_pool,id)
+    .await
+    .unwrap();
+    Ok(warp::reply::json(&id))
 }
 
 

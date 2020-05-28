@@ -79,7 +79,7 @@ pub fn todos_create_route(
 pub fn todos_update_route(
     state: AppState,
 ) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
-    warp::path!("todo" / u64)
+    warp::path!("todo" / i32)
     .and(warp::put())
     .and(json_body_todoupdate())
     .and(with_state(state))
@@ -92,7 +92,7 @@ pub fn todos_update_route(
 pub fn todos_delete_route(
     state: AppState,
 ) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
-    warp::path!("todo" / u64)
+    warp::path!("todo" / i32)
     .and(warp::delete())
     .and(with_state(state))
     .and_then(handlers::todos_delete_handler)

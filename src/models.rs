@@ -20,7 +20,7 @@ const TABLE: &str = "todo";
 pub struct Todo {
     pub id: i32,
     pub name: String,
-  //  pub completed: bool,
+    pub checked: bool,
   //  pub priority: Option<String>,
 }
 
@@ -28,14 +28,13 @@ pub struct Todo {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct TodoCreate {
     pub name: String,
-    pub priority: Option<String>,
 }
 
 //Struct for sending parameters to update Todo item
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct TodoUpdate {
     pub name: Option<String>,
-    pub completed: Option<bool>,
+    pub checked: Option<bool>,
 }
 
 
@@ -62,11 +61,11 @@ pub async fn get_db_con(db_pool: &Pool) -> std::result::Result<deadpool_postgres
 
 // Function to convert database row to Rust Todo struct
 fn row_to_todo(row: &Row) -> Todo {
-    let id: i32 = row.get(0);
-    let name: String = row.get(1);
-   // let completed = false;
+    let id: i32 = row.get("id");
+    let name: String = row.get("name");
+    let checked = row.get("checked");
    // let priority = Some("".into());
-    Todo { id, name }
+    Todo { id, name,checked }
 }
 
 // Function to fetch todos from database
@@ -74,7 +73,7 @@ pub async fn fetch_to_dos(db_pool: &Pool) -> Result<Vec<Todo>> {
   //  let client = db_pool.get().await.unwrap();
   let client: Client = get_db_con(db_pool).await.unwrap();
     let rows = client
-        .query("SELECT id, name from todo", &[])
+        .query("SELECT id, name, checked from todo", &[])
         .await
         .unwrap();
     Ok(rows.iter().map(|r| row_to_todo(&r)).collect())
@@ -83,18 +82,18 @@ pub async fn fetch_to_dos(db_pool: &Pool) -> Result<Vec<Todo>> {
 // Function to create a Todo
 pub async fn create_todo(db_pool: &Pool, body: TodoCreate) -> Result<Todo> {
     let con = get_db_con(db_pool).await.unwrap();
-    let query = format!("INSERT INTO {} (name) VALUES ($1) RETURNING *", TABLE);
- //   let b: bool = false;
+    let query = format!("INSERT INTO {} (name,checked) VALUES ($1,$2) RETURNING *", TABLE);
+    let b: bool = false;
  //   let p: String = String::from("low");
     let row = con
-        .query_one(query.as_str(), &[&body.name])
+        .query_one(query.as_str(), &[&body.name,&b])
         .await
         .unwrap();
     Ok(row_to_todo(&row))
 }
-/*
-pub async fn update_todo(db_pool: &DBPool, id: i32, body: TodoUpdateRequest) -> Result<Todo> {
-    let con = get_db_con(db_pool).await?;
+
+pub async fn update_todo(db_pool: &Pool, id: i32, body: TodoUpdate) -> Result<Todo> {
+    let con = get_db_con(db_pool).await.unwrap();
     let query = format!(
         "UPDATE {} SET name = $1, checked = $2 WHERE id = $3 RETURNING *",
         TABLE
@@ -102,15 +101,15 @@ pub async fn update_todo(db_pool: &DBPool, id: i32, body: TodoUpdateRequest) -> 
     let row = con
         .query_one(query.as_str(), &[&body.name, &body.checked, &id])
         .await
-        .map_err(DBQueryError)?;
+        .unwrap();
     Ok(row_to_todo(&row))
 }
 
-pub async fn delete_todo(db_pool: &DBPool, id: i32) -> Result<u64> {
-    let con = get_db_con(db_pool).await?;
+pub async fn delete_todo(db_pool: &Pool, id: i32) -> Result<i32> {
+    let con = get_db_con(db_pool).await.unwrap();
     let query = format!("DELETE FROM {} WHERE id = $1", TABLE);
     con.execute(query.as_str(), &[&id])
         .await
-        .map_err(DBQueryError)
+        .unwrap();
+        Ok(id)
 }
-*/
