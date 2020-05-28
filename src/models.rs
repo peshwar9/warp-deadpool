@@ -13,3 +13,9 @@ pub struct TodoCreate {
     pub name: String,
 }
 
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct TodoUpdate {
+    pub name: String,
+    pub completed: bool,
+}
+

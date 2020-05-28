@@ -1,7 +1,7 @@
 use crate::app::AppState;
 use crate::handlers;
 use warp::{Filter, Rejection, Reply};
-use crate::utils::{with_state, json_body};
+use crate::utils::{with_state, json_body, json_body_todocreate, json_body_todoupdate};
 
 
 pub fn routes(
@@ -47,34 +47,35 @@ pub fn todos_list_route(
 }
 
 
-// http post localhost:3030/todo id:=1 name=chris completed:=true
+// http post localhost:3030/todo name=chris
 pub fn todos_create_route(
     state: AppState,
 ) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
     warp::path!("todo")
     .and(warp::post())
-    .and(json_body())
+    .and(json_body_todocreate())
     .and(with_state(state))
     .and_then(handlers::todos_create_handler)
    
 }
 
-// http put localhost:3030/hello
+// http put localhost:3030/todo/1 name=Pam completed:=true
 pub fn todos_update_route(
     state: AppState,
 ) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
-    warp::path!("todo")
+    warp::path!("todo" / u64)
     .and(warp::put())
+    .and(json_body_todoupdate())
     .and(with_state(state))
     .and_then(handlers::todos_update_handler)
    
 }
 
-// http delete localhost:3030/hello
+// http delete localhost:3030/todo/1
 pub fn todos_delete_route(
     state: AppState,
 ) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
-    warp::path!("todo")
+    warp::path!("todo" / u64)
     .and(warp::delete())
     .and(with_state(state))
     .and_then(handlers::todos_delete_handler)
@@ -141,10 +142,10 @@ mod tests {
         assert_eq!(response.status(), StatusCode::OK);
         println!("response from todos_create_route is {:#?}", response.body());
     }
-    // Create todo failure
-    //cargo test todos_create_test1 -- --nocapture
+    // Unknown path
+    //cargo test todos_unknown_path -- --nocapture
     #[tokio::test]
-    async fn todos_create_test2() {
+    async fn todos_unknown_path() {
         let db_url = String::from("postgres://postgres");
         let jwt_string = String::from("afkjlksdf");
         let state = AppState { jwt_string, db_url };
@@ -159,7 +160,6 @@ mod tests {
             })
             .reply(&api).await;
         assert_eq!(response.status(), StatusCode::NOT_FOUND);
-        println!("response from todos_create_route is {:#?}", response.body());
     }
     #[tokio::test]
     async fn todos_update_test() {
