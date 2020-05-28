@@ -1,17 +1,25 @@
 [package]
 name = "warp-deadpool"
-version = "0.1.0"
-authors = ["peshwar9 <par.esh1937@gmail.com>"]
+version = "0.4"
+authors = ["peshwar9"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+
+# Web micro-framework in Rust
 warp = "0.2"
+
+# async task runner
 tokio = {version = "0.2", features = ["macros"]}
-dotenv = "0.15.0"
+
+
+# Database library and async connection pool
 deadpool-postgres = "0.5.5"
 tokio-postgres = "0.5.4"
-serde = {version = "1.0.110", features = ["derive"]}
-# Cargo and terminal abstraction
-console = "0.11.3"
+
+# utility libs
+serde = {version = "1.0.110", features = ["derive"]} # For data serialization
+dotenv = "0.15.0" # To load environment variables
+console = "0.11.3" # Cargo and terminal abstraction

@@ -1,9 +1,20 @@
+// Standard lib: None
+
+// External crates - Primary
+use warp::{Filter, Rejection, Reply};
+
+// External crates - Utilities: None
+
+// Other internal modules
 use crate::app::AppState;
 use crate::handlers;
-use warp::{Filter, Rejection, Reply};
 use crate::utils::{with_state, json_body_todocreate, json_body_todoupdate};
 
+// Const and type declarations: None
+// Struct declarations: None
 
+
+// Filter function to construct routes
 pub fn routes(
     state: AppState,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
@@ -16,6 +27,7 @@ pub fn routes(
 }
 
 // http localhost:3030/hello
+// Filter function for Index route
 pub fn index_route(
     state: AppState,
 ) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
@@ -26,6 +38,7 @@ pub fn index_route(
 }
 
 // http localhost:3030/health
+// Filter function for Health route
 pub fn health_route(
     state: AppState,
 ) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
@@ -36,6 +49,7 @@ pub fn health_route(
 }
 
 // http localhost:3030/todo
+// Filter function for listing To dos
 pub fn todos_list_route(
     state: AppState,
 ) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
@@ -48,6 +62,7 @@ pub fn todos_list_route(
 
 
 // http post localhost:3030/todo name=chris
+// Filter function for creating a Todo item
 pub fn todos_create_route(
     state: AppState,
 ) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
@@ -60,6 +75,7 @@ pub fn todos_create_route(
 }
 
 // http put localhost:3030/todo/1 name=Pam completed:=true
+// Filter function for updating a Todo item
 pub fn todos_update_route(
     state: AppState,
 ) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
@@ -72,6 +88,7 @@ pub fn todos_update_route(
 }
 
 // http delete localhost:3030/todo/1
+// Filter function for deleting Todo item
 pub fn todos_delete_route(
     state: AppState,
 ) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
@@ -82,7 +99,7 @@ pub fn todos_delete_route(
    
 }
 
-
+// ======= Unit tests section below ==========================================
 
 // To run all tests: cargo test  -- --nocapture
 // To run all tests and use println: cargo test  -- --nocapture

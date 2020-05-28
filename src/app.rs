@@ -1,10 +1,23 @@
-use crate::routes;
-use console::Style;
+// Standard lib
 use std::env;
+
+// External crates - Primary
 use warp::Filter;
+use deadpool_postgres::{ Manager, Pool};
+use tokio_postgres::{Config, NoTls,Row};
+use console::Style;
+
+// External crates - Utilities
+
+
+// Other internal modules
+use crate::routes;
 use crate::errors::handle_rejection;
 
+// Const and types declaration
 const APP_NAME: &str = env!("CARGO_PKG_NAME");
+
+// Structs declaration
 
 #[derive(Clone, Debug)]
 pub struct AppState {
@@ -12,6 +25,7 @@ pub struct AppState {
     pub db_url: String,
 }
 
+// Function to perform initializations and start the web server
 pub async fn init_and_run() {
     // Environment variables
     let db_url = env::var("DATABASE_URL").expect("Database URL must be set");

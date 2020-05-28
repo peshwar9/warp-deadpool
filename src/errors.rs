@@ -1,6 +1,15 @@
-use warp::{http::StatusCode, Rejection, Reply};
-use serde::Serialize;
+// Standard lib
 use std::convert::Infallible;
+
+// External crates - Primary
+use warp::{http::StatusCode, Rejection, Reply};
+
+// External crates - Utilities
+use serde::Serialize;
+
+// Other internal modules: None
+// Const and type declarations: None
+// Struct declarations
 
 #[derive(Serialize)]
 struct ErrorResponse {
@@ -12,6 +21,7 @@ pub struct AppError;
 
 impl warp::reject::Reject for AppError {}
 
+// Function to provide meaningful error messages to caller of APIs.
 pub async fn handle_rejection(err: Rejection) -> std::result::Result<impl Reply, Infallible> {
 let code;
 let message;
@@ -31,7 +41,6 @@ if err.is_not_found() {
     code = StatusCode::INTERNAL_SERVER_ERROR;
     message = "Internal server error";
 }
-
 
 let json = warp::reply::json(&ErrorResponse {
     message: message.into(),
