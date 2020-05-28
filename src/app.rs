@@ -2,6 +2,7 @@ use crate::routes;
 use console::Style;
 use std::env;
 use warp::Filter;
+use crate::errors::handle_rejection;
 
 const APP_NAME: &str = env!("CARGO_PKG_NAME");
 
@@ -26,8 +27,8 @@ pub async fn init_and_run() {
     //Routes
     let routes = routes::routes(app_state)
         .with(warp::log(APP_NAME))
-        .with(warp::cors().allow_any_origin());
-
+        .with(warp::cors().allow_any_origin())
+        .recover(handle_rejection);
     // Console messages
     println!("\nWarp todo server ready at {}", blue.apply_to(&url));
     println!("Use $curl localhost:3030/hello to test end points");
