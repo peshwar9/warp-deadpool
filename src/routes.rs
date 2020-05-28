@@ -1,7 +1,8 @@
 use crate::app::AppState;
 use crate::handlers;
 use warp::{Filter, Rejection, Reply};
-use crate::utils::with_state;
+use crate::utils::{with_state, json_body};
+
 
 pub fn routes(
     state: AppState,
@@ -45,12 +46,14 @@ pub fn todos_list_route(
    
 }
 
-// http post localhost:3030/todo
+
+// http post localhost:3030/todo id:=1 name=chris completed:=true
 pub fn todos_create_route(
     state: AppState,
 ) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
     warp::path!("todo")
     .and(warp::post())
+    .and(json_body())
     .and(with_state(state))
     .and_then(handlers::todos_create_handler)
    
@@ -96,7 +99,7 @@ mod tests {
         todos_delete_route,
     };
     use crate::app::AppState;
-
+    use crate::models::Todo;
 
     #[tokio::test]
     async fn hello_test() {
@@ -118,14 +121,44 @@ mod tests {
         assert_eq!(response.status(), StatusCode::OK);
         println!("response from todos_list_route is {:#?}", response.body());
     }
+    // Create todo success
+    //cargo test todos_create_test1 -- --nocapture
     #[tokio::test]
-    async fn todos_create_test() {
+    async fn todos_create_test1() {
         let db_url = String::from("postgres://postgres");
         let jwt_string = String::from("afkjlksdf");
         let state = AppState { jwt_string, db_url };
         let api = todos_create_route(state);
-        let response = request().method("POST").path("/todo").reply(&api).await;
+        let response = request()
+            .method("POST")
+            .path("/todo")
+            .json(&Todo {
+                id: 1,
+                name: "chris".into(),
+                completed: false,
+            })
+            .reply(&api).await;
         assert_eq!(response.status(), StatusCode::OK);
+        println!("response from todos_create_route is {:#?}", response.body());
+    }
+    // Create todo failure
+    //cargo test todos_create_test1 -- --nocapture
+    #[tokio::test]
+    async fn todos_create_test2() {
+        let db_url = String::from("postgres://postgres");
+        let jwt_string = String::from("afkjlksdf");
+        let state = AppState { jwt_string, db_url };
+        let api = todos_create_route(state);
+        let response = request()
+            .method("POST")
+            .path("/todos")
+            .json(&Todo {
+                id: 1,
+                name: "chris".into(),
+                completed: false,
+            })
+            .reply(&api).await;
+        assert_eq!(response.status(), StatusCode::NOT_FOUND);
         println!("response from todos_create_route is {:#?}", response.body());
     }
     #[tokio::test]
