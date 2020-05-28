@@ -1,7 +1,7 @@
 use crate::app::AppState;
 use crate::handlers;
 use warp::{Filter, Rejection, Reply};
-use crate::utils::{with_state, json_body, json_body_todocreate, json_body_todoupdate};
+use crate::utils::{with_state, json_body_todocreate, json_body_todoupdate};
 
 
 pub fn routes(
@@ -84,9 +84,9 @@ pub fn todos_delete_route(
 
 
 
-
-// cargo test -- --nocapture , if you want to use println
-// To run single test cargo test hello_test -- --nocapture
+// To run all tests: cargo test  -- --nocapture
+// To run all tests and use println: cargo test  -- --nocapture
+// To run single test: cargo test hello_test -- --nocapture
 #[cfg(test)]
 mod tests {
     use warp::http::StatusCode;
@@ -100,8 +100,9 @@ mod tests {
         todos_delete_route,
     };
     use crate::app::AppState;
-    use crate::models::Todo;
+    use crate::models::{Todo, TodoCreate, TodoUpdate};
 
+    // cargo test hello_test -- --nocapture
     #[tokio::test]
     async fn hello_test() {
         let db_url = String::from("postgres://postgres");
@@ -112,6 +113,7 @@ mod tests {
         assert_eq!(response.status(), StatusCode::OK);
         println!("response from  index_route is {:#?}", response.body());
     }
+    // cargo test todos_list_test -- --nocapture
     #[tokio::test]
     async fn todos_list_test() {
         let db_url = String::from("postgres://postgres");
@@ -133,10 +135,8 @@ mod tests {
         let response = request()
             .method("POST")
             .path("/todo")
-            .json(&Todo {
-                id: 1,
+            .json(&TodoCreate {
                 name: "chris".into(),
-                completed: false,
             })
             .reply(&api).await;
         assert_eq!(response.status(), StatusCode::OK);
@@ -161,23 +161,34 @@ mod tests {
             .reply(&api).await;
         assert_eq!(response.status(), StatusCode::NOT_FOUND);
     }
+    // cargo test todos_update_test -- --nocapture
     #[tokio::test]
     async fn todos_update_test() {
         let db_url = String::from("postgres://postgres");
         let jwt_string = String::from("afkjlksdf");
         let state = AppState { jwt_string, db_url };
         let api = todos_update_route(state);
-        let response = request().method("PUT").path("/todo").reply(&api).await;
+        let response = request().method("PUT")
+        .path("/todo/1")
+        .json(&TodoUpdate {
+            name: "pam".into(),
+            completed: false,
+        })
+        .reply(&api).await;
         assert_eq!(response.status(), StatusCode::OK);
         println!("response from todos_update_route is {:#?}", response.body());
     }
+    // cargo test todos_delete_test -- --nocapture
     #[tokio::test]
     async fn todos_delete_test() {
         let db_url = String::from("postgres://postgres");
         let jwt_string = String::from("afkjlksdf");
         let state = AppState { jwt_string, db_url };
         let api = todos_delete_route(state);
-        let response = request().method("DELETE").path("/todo").reply(&api).await;
+        let response = request()
+        .method("DELETE")
+        .path("/todo/1")
+        .reply(&api).await;
         assert_eq!(response.status(), StatusCode::OK);
         println!("response from todos_delete_route is {:#?}", response.body());
     }

@@ -1,7 +1,7 @@
 use crate::app::AppState;
 use std::convert::Infallible;
 use warp::{http::StatusCode, Reply};
-use crate::models::{Todo, TodoCreate, TodoUpdate};
+use crate::models::{TodoCreate, TodoUpdate};
 
 pub async fn index_handler(_state: AppState) -> Result<impl Reply, Infallible> {
     Ok(warp::reply::json(&String::from("Hello from handler")))
