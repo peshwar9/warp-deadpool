@@ -1,6 +1,6 @@
-mod app;
-mod routes;
-mod handlers;
+pub mod app;
+pub mod routes;
+pub mod handlers;
 
 
 #[tokio::main]

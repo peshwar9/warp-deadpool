@@ -13,3 +13,5 @@ dotenv = "0.15.0"
 deadpool-postgres = "0.5.5"
 tokio-postgres = "0.5.4"
 serde = {version = "1.0.110", features = ["derive"]}
+# Cargo and terminal abstraction
+console = "0.11.3"
