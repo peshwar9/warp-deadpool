@@ -7,7 +7,7 @@ use warp::{http::StatusCode, reject, Reply, Rejection};
 // External crates - Utilities: None
 // Other internal modules
 use crate::app::AppState;
-use crate::models::{TodoCreate, TodoUpdate};
+use crate::models::{TodoCreate, TodoUpdate, Todo, fetch_to_dos, create_todo};
 use crate::errors::AppError;
 // Const and type declarations:None
 // Struct declarations:None
@@ -23,20 +23,22 @@ pub async fn health_handler(_state: AppState) -> Result<impl Reply, Infallible> 
 }
 
 // Todo: List handler
-pub async fn todos_list_handler(_state: AppState) -> Result<impl Reply, Infallible> {
-    Ok(warp::reply::json(&String::from("Hello from list_todos")))
+pub async fn todos_list_handler(state: AppState) -> Result<impl Reply, Infallible> {
+    let r: Vec<Todo> = fetch_to_dos(&state.db_pool).await.unwrap();
+    Ok(warp::reply::json(&r))
 }
 
 // Todo: Create handler
-pub async fn todos_create_handler(todo: TodoCreate, _state: AppState) -> Result<impl Reply, Rejection> {
-        let name = &todo.name;
-       if let Ok(_) = name.parse::<String>() {
-            let response = format!("Hello from create_todo {:#?}", todo);
-            Ok(warp::reply::json(&response))
-        } else {
-            Err(reject::custom(AppError))
-        }
+pub async fn todos_create_handler(todo: TodoCreate, state: AppState) -> Result<impl Reply, Rejection> {
+    let r = create_todo(&state.db_pool,todo)
+    .await
+    .unwrap();
+    //let pool = pool.clone();
 
+
+//            Err(reject::custom(AppError))
+  
+Ok(warp::reply::json(&r))
     }
    
 // Todo: Update handler
