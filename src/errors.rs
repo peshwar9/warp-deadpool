@@ -58,6 +58,10 @@ if err.is_not_found() {
         MyError::CannotEncodeJwtToken(_) => {
             code = StatusCode::BAD_REQUEST;
             message = "Unable to generate token";
+        }  
+        MyError::CannotDecodeJwtToken(_) => {
+            code = StatusCode::BAD_REQUEST;
+            message = "Unable to decode token";
         }        
         MyError::NotFound(_) => {
             code = StatusCode::BAD_REQUEST;

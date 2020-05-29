@@ -37,3 +37,14 @@ pub async fn create_jwt() -> Result<String, MyError> {
     //  .map_err(|e| ResponseError(e.to_string()))
 }
 
+/// Decode a json web token (JWT)
+pub async fn decode_jwt(token: &str) -> Result<Claims, MyError> {
+    let key = env::var("JWT_SECRET").expect("JWT secret must be set");
+    let decoding_key = DecodingKey::from_secret(key.as_bytes());
+    decode::<Claims>(token, &decoding_key, &Validation::default())
+        .map(|data| data.claims)
+        .map_err(|e| MyError::CannotDecodeJwtToken(e.to_string()))
+
+    //   .map_err(|e| ResponseError(e.to_string()))
+}
+

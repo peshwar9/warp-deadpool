@@ -2,8 +2,8 @@
 use std::convert::Infallible;
 use std::env;
 // External crates - Primary
-use warp::{http::StatusCode, reject, Reply, Rejection};
-
+use warp::{http::StatusCode, Filter, reject, Reply, Rejection};
+use warp::http::header::HeaderValue;
 // External crates - Utilities: None
 // Other internal modules
 use crate::app::AppState;
@@ -16,7 +16,7 @@ use crate::models::{TodoCreate,
     update_todo,
     delete_todo,    
 };
-use crate::auth::create_jwt;
+use crate::auth::{create_jwt, decode_jwt};
 use crate::errors;
 use crate::errors::{MyError};
 
@@ -25,7 +25,12 @@ use crate::errors::{MyError};
 
 // Index handler
 pub async fn index_handler(_state: AppState, jwt_token: String) -> Result<impl Reply> {
+  /*  let res = decode_jwt(&jwt_token)
+        .await
+        .map_err(|_| warp::reject())?;
+   */
     Ok(warp::reply::json(&format!("Hello from handler {}",jwt_token)))
+
 }
 // Gettoken handler
 pub async fn gettoken_handler(user: String, password: String, _state: AppState) -> Result<impl Reply> {

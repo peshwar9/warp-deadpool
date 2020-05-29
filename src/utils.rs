@@ -38,5 +38,6 @@ pub fn json_body_todoupdate() -> impl Filter<Extract = (TodoUpdate,), Error = wa
 pub fn extract_jwt_token() -> impl Filter<Extract = (String,), Error = warp::Rejection> + Clone {
 warp::header::value("Authorization").map(|value: HeaderValue| {
     format!("{:?}",value)
+
 })
 }
