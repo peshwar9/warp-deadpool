@@ -20,6 +20,7 @@ pub fn routes(
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     index_route(state.clone())
     .or(health_route(state.clone()))
+    .or(gettoken_route(state.clone()))
     .or(todos_list_route(state.clone()))
     .or(todos_create_route(state.clone()))
     .or(todos_update_route(state.clone()))
@@ -35,6 +36,15 @@ pub fn index_route(
         .and(warp::get())
         .and(with_state(state))
         .and_then(handlers::index_handler)
+}
+
+pub fn gettoken_route(
+    state: AppState,
+) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
+    warp::path!("gettoken")
+        .and(warp::get())
+        .and(with_state(state))
+        .and_then(handlers::gettoken_handler)
 }
 
 // http localhost:3030/health

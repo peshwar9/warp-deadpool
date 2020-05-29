@@ -16,6 +16,7 @@ use crate::models::{TodoCreate,
     update_todo,
     delete_todo,    
 };
+use crate::auth::create_jwt;
 use crate::errors;
 use crate::errors::{MyError};
 
@@ -25,6 +26,13 @@ use crate::errors::{MyError};
 // Index handler
 pub async fn index_handler(_state: AppState) -> Result<impl Reply> {
     Ok(warp::reply::json(&String::from("Hello from handler")))
+}
+// Gettoken handler
+pub async fn gettoken_handler(_state: AppState) -> Result<impl Reply> {
+    let token  = create_jwt()
+    .await
+    .map_err(|e| reject::custom(e))?;
+    Ok(warp::reply::json(&token))
 }
 // Health handler
 pub async fn health_handler(_state: AppState) -> Result<impl Reply> {
@@ -36,7 +44,7 @@ pub async fn health_handler(_state: AppState) -> Result<impl Reply> {
 pub async fn todos_list_handler(state: AppState) -> Result<impl Reply> {
     let r: Vec<Todo> = fetch_to_dos(&state.db_pool)
     .await
-    .map_err(|e| reject::custom(MyError::InternalServerError(e.to_string())))?;
+    .map_err(|e| reject::custom(e))?;
     Ok(warp::reply::json(&r))
 }
 

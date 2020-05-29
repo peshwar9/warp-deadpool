@@ -4,6 +4,8 @@ mod routes;
 mod utils;
 mod models;
 mod errors;
+mod auth;
+
 type Result<T> = std::result::Result<T, warp::Rejection>;
 
 #[tokio::main]

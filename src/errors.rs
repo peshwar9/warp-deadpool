@@ -17,6 +17,8 @@ use derive_more::{Display};
 #[derive(Display, Debug)]
 pub enum MyError {
     NotFound(TokioError),
+    CannotDecodeJwtToken(String),
+    CannotEncodeJwtToken(String),
     DBPoolError(PoolError),
     DBQueryError(TokioError),
 //    DBInitError(TokioError),
@@ -53,6 +55,10 @@ if err.is_not_found() {
             code = StatusCode::BAD_REQUEST;
             message = "Error in query, please send correct data";
         }
+        MyError::CannotEncodeJwtToken(_) => {
+            code = StatusCode::BAD_REQUEST;
+            message = "Unable to generate token";
+        }        
         MyError::NotFound(_) => {
             code = StatusCode::BAD_REQUEST;
             message = "The requested data is not found";
