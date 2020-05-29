@@ -25,10 +25,10 @@ use crate::errors::{MyError};
 
 // Index handler
 pub async fn index_handler(_state: AppState, jwt_token: String) -> Result<impl Reply> {
-  /*  let res = decode_jwt(&jwt_token)
+    let res = decode_jwt(&jwt_token)
         .await
         .map_err(|_| warp::reject())?;
-   */
+   println!("after decode: {:#?}",res.company);
     Ok(warp::reply::json(&format!("Hello from handler {}",jwt_token)))
 
 }
