@@ -34,6 +34,7 @@ impl warp::reject::Reject for MyError {}
 
 // Function to provide meaningful error messages to caller of APIs.
 pub async fn handle_rejection(err: Rejection) -> std::result::Result<impl Reply, Infallible> {
+// Only error not handled is when database columns are None and records are retrieved    
 let code;
 let message;
 println!("In handle_rejection, err is {:#?}", err);
