@@ -8,7 +8,11 @@ use warp::{Filter, Rejection, Reply};
 // Other internal modules
 use crate::app::AppState;
 use crate::handlers;
-use crate::utils::{with_state, json_body_todocreate, json_body_todoupdate};
+use crate::utils::{with_state, 
+    json_body_todocreate, 
+    json_body_todoupdate,
+    extract_jwt_token,
+};
 
 // Const and type declarations: None
 // Struct declarations: None
@@ -35,6 +39,7 @@ pub fn index_route(
     warp::path!("hello")
         .and(warp::get())
         .and(with_state(state))
+        .and(extract_jwt_token())
         .and_then(handlers::index_handler)
 }
 

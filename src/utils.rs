@@ -2,6 +2,7 @@
 use std::convert::Infallible;
 // External crates - Primary
 use warp::Filter;
+use warp::http::header::HeaderValue;
 // External crates - Utilities: None
 
 // Other internal modules
@@ -31,4 +32,11 @@ pub fn json_body_todoupdate() -> impl Filter<Extract = (TodoUpdate,), Error = wa
     // When accepting a body, we want a JSON body
     // (and to reject huge payloads)...
     warp::body::content_length_limit(1024 * 16).and(warp::body::json())
+}
+
+// Filter function to extract JWT token from request
+pub fn extract_jwt_token() -> impl Filter<Extract = (String,), Error = warp::Rejection> + Clone {
+warp::header::value("Authorization").map(|value: HeaderValue| {
+    format!("{:?}",value)
+})
 }

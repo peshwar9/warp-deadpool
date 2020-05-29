@@ -24,8 +24,8 @@ use crate::errors::{MyError};
 // Struct declarations:None
 
 // Index handler
-pub async fn index_handler(_state: AppState) -> Result<impl Reply> {
-    Ok(warp::reply::json(&String::from("Hello from handler")))
+pub async fn index_handler(_state: AppState, jwt_token: String) -> Result<impl Reply> {
+    Ok(warp::reply::json(&format!("Hello from handler {}",jwt_token)))
 }
 // Gettoken handler
 pub async fn gettoken_handler(user: String, password: String, _state: AppState) -> Result<impl Reply> {
