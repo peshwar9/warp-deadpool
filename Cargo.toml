@@ -23,3 +23,4 @@ tokio-postgres = "0.5.4"
 serde = {version = "1.0.110", features = ["derive"]} # For data serialization
 dotenv = "0.15.0" # To load environment variables
 console = "0.11.3" # Cargo and terminal abstraction
+derive_more = "0.99.7" # derive some traits automatically

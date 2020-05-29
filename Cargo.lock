@@ -204,6 +204,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "derive_more"
+version = "0.99.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2127768764f1556535c01b5326ef94bd60ff08dcfbdc544d53e69ed155610f5d"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "digest"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1612,6 +1623,7 @@ version = "0.4.0"
 dependencies = [
  "console",
  "deadpool-postgres",
+ "derive_more",
  "dotenv",
  "serde",
  "tokio",
