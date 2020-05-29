@@ -108,6 +108,7 @@ pub fn todos_delete_route(
 mod tests {
     use warp::http::StatusCode;
     use warp::test::request;
+    use dotenv::dotenv;
 
     use super::{
         index_route,
@@ -115,94 +116,94 @@ mod tests {
         todos_create_route,
         todos_update_route,
         todos_delete_route,
-    };
-    use crate::app::AppState;
-    use crate::models::{TodoCreate, TodoUpdate};
 
+    };
+    use crate:: {
+        models,
+        models::{create_pool,TodoCreate, TodoUpdate},
+        app::AppState
+    };
+
+
+
+    // Test for index_route
     // cargo test hello_test -- --nocapture
     #[tokio::test]
     async fn hello_test() {
+        dotenv::dotenv().ok();
         let db_url = String::from("postgres://postgres");
         let jwt_string = String::from("afkjlksdf");
-        let state = AppState { jwt_string, db_url };
+        let db_pool = models::create_pool().expect("database pool cannot be created");
+        let state = AppState { jwt_string, db_url, db_pool };
         let api = index_route(state);
         let response = request().method("GET").path("/hello").reply(&api).await;
         assert_eq!(response.status(), StatusCode::OK);
         println!("response from  index_route is {:#?}", response.body());
     }
+    // Test for todos_list_route
     // cargo test todos_list_test -- --nocapture
     #[tokio::test]
     async fn todos_list_test() {
+        dotenv::dotenv().ok();
         let db_url = String::from("postgres://postgres");
         let jwt_string = String::from("afkjlksdf");
-        let state = AppState { jwt_string, db_url };
+        let db_pool = models::create_pool().expect("database pool cannot be created");
+        let state = AppState { jwt_string, db_url,db_pool };
         let api = todos_list_route(state);
         let response = request().method("GET").path("/todo").reply(&api).await;
         assert_eq!(response.status(), StatusCode::OK);
         println!("response from todos_list_route is {:#?}", response.body());
     }
-    // Create todo success
+    // Test for todos_create_route
     //cargo test todos_create_test1 -- --nocapture
     #[tokio::test]
     async fn todos_create_test1() {
+        dotenv::dotenv().ok();
         let db_url = String::from("postgres://postgres");
         let jwt_string = String::from("afkjlksdf");
-        let state = AppState { jwt_string, db_url };
+        let db_pool = models::create_pool().expect("database pool cannot be created");
+        let state = AppState { jwt_string, db_url, db_pool };
         let api = todos_create_route(state);
         let response = request()
             .method("POST")
             .path("/todo")
             .json(&TodoCreate {
-                name: "chris".into(),
-                priority: None
+                name: "chris".into()
             })
             .reply(&api).await;
         assert_eq!(response.status(), StatusCode::OK);
         println!("response from todos_create_route is {:#?}", response.body());
     }
-    // Unknown path
-    //cargo test todos_unknown_path -- --nocapture
-    #[tokio::test]
-    async fn todos_unknown_path() {
-        let db_url = String::from("postgres://postgres");
-        let jwt_string = String::from("afkjlksdf");
-        let state = AppState { jwt_string, db_url };
-        let api = todos_create_route(state);
-        let response = request()
-            .method("POST")
-            .path("/todos")
-            .json(&TodoCreate {
-           
-                name: "chris".into(),
-                priority: None
-            })
-            .reply(&api).await;
-        assert_eq!(response.status(), StatusCode::NOT_FOUND);
-    }
 
+    // Test for todos_update_route
     // cargo test todos_update_test -- --nocapture
     #[tokio::test]
     async fn todos_update_test() {
+        dotenv::dotenv().ok();
         let db_url = String::from("postgres://postgres");
         let jwt_string = String::from("afkjlksdf");
-        let state = AppState { jwt_string, db_url };
+        let db_pool = models::create_pool().expect("database pool cannot be created");
+        let state = AppState { jwt_string, db_url ,db_pool };
         let api = todos_update_route(state);
         let response = request().method("PUT")
         .path("/todo/1")
         .json(&TodoUpdate {
             name: Some("pam".into()),
-            completed: Some(false),
+            checked: Some(false),
         })
         .reply(&api).await;
         assert_eq!(response.status(), StatusCode::OK);
         println!("response from todos_update_route is {:#?}", response.body());
     }
+    // Test for todos_delete_route
     // cargo test todos_delete_test -- --nocapture
     #[tokio::test]
     async fn todos_delete_test() {
+        dotenv::dotenv().ok();
         let db_url = String::from("postgres://postgres");
         let jwt_string = String::from("afkjlksdf");
-        let state = AppState { jwt_string, db_url };
+        let db_pool = models::create_pool().expect("database pool cannot be created");
+        let state = AppState { jwt_string, db_url, db_pool };
         let api = todos_delete_route(state);
         let response = request()
         .method("DELETE")
@@ -210,5 +211,27 @@ mod tests {
         .reply(&api).await;
         assert_eq!(response.status(), StatusCode::OK);
         println!("response from todos_delete_route is {:#?}", response.body());
+    }
+    
+    // Test for unknown path , expected return code NOT_FOUND
+    //cargo test todos_unknown_path -- --nocapture
+    #[tokio::test]
+    async fn todos_unknown_path() {
+        dotenv::dotenv().ok();
+        let db_url = String::from("postgres://postgres");
+        let jwt_string = String::from("afkjlksdf");
+        let db_pool = models::create_pool().expect("database pool cannot be created");
+        let state = AppState { jwt_string, db_url, db_pool };
+        let api = todos_create_route(state);
+        let response = request()
+            .method("POST")
+            .path("/todos")
+            .json(&TodoCreate {
+           
+                name: "chris".into(),
+                
+            })
+            .reply(&api).await;
+        assert_eq!(response.status(), StatusCode::NOT_FOUND);
     }
 }
