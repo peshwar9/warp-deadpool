@@ -43,6 +43,8 @@ pub fn gettoken_route(
 ) -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
     warp::path!("gettoken")
         .and(warp::get())
+        .and(warp::header("user"))
+        .and(warp::header("password"))
         .and(with_state(state))
         .and_then(handlers::gettoken_handler)
 }

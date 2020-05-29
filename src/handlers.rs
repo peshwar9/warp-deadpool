@@ -1,6 +1,6 @@
 // Standard lib
 use std::convert::Infallible;
-
+use std::env;
 // External crates - Primary
 use warp::{http::StatusCode, reject, Reply, Rejection};
 
@@ -28,7 +28,12 @@ pub async fn index_handler(_state: AppState) -> Result<impl Reply> {
     Ok(warp::reply::json(&String::from("Hello from handler")))
 }
 // Gettoken handler
-pub async fn gettoken_handler(_state: AppState) -> Result<impl Reply> {
+pub async fn gettoken_handler(user: String, password: String, _state: AppState) -> Result<impl Reply> {
+    let env_user = env::var("ADMIN_USER").expect("Admin user not set");
+    let env_password = env::var("ADMIN_PASSWORD").expect("Admin password not set");
+    if user != env_user || password != env_password {
+        return Err(warp::reject::not_found())
+    }
     let token  = create_jwt()
     .await
     .map_err(|e| reject::custom(e))?;

@@ -66,7 +66,7 @@ if err.is_not_found() {
         _ => {
             eprintln!("unhandled application error: {:?}", err);
             code = StatusCode::INTERNAL_SERVER_ERROR;
-            message = "Internal Server Error";
+            message = "Some internal error-please contact administrator";
         }
     }
     
